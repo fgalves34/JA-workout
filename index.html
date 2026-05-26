@@ -895,7 +895,7 @@
 /* ---------- WORKOUT DATA ---------- */
 const PROGRAM = [
   {
-    name:"Lower A", accent:"Quads & Glutes",
+    name:"Quad & Glute Focus", accent:"Lower Body A",
     ex:[
       {n:"Goblet Squat",s:"3 × 10",note:"Hold one DB at chest. Sit back like into a chair, knees track over toes, chest up. Rest 75s.",q:"goblet squat form"},
       {n:"Romanian Deadlift (DBs)",s:"3 × 10",note:"Soft knees, push hips BACK, DBs slide down thighs. Feel it in hamstrings, not low back. Rest 75s.",q:"dumbbell romanian deadlift form"},
@@ -909,7 +909,7 @@ const PROGRAM = [
     ]
   },
   {
-    name:"Upper A", accent:"Push focus",
+    name:"Push Focus", accent:"Upper Body A",
     ex:[
       {n:"DB Chest Press (floor)",s:"3 × 10",note:"Lie on floor, press DBs straight up, lower until elbows lightly touch floor. Rest 75s.",q:"floor dumbbell press form"},
       {n:"DB Shoulder Press",s:"3 × 10",note:"Press overhead, don't arch back. Can sit for support. Rest 60s.",q:"seated dumbbell shoulder press form"},
@@ -923,7 +923,7 @@ const PROGRAM = [
     ]
   },
   {
-    name:"Lower B", accent:"Glutes & Hamstrings",
+    name:"Glute & Hamstring Focus", accent:"Lower Body B",
     ex:[
       {n:"DB Sumo Squat",s:"3 × 10",note:"Wide stance, toes out, hold one DB between legs, sit straight down. Rest 75s.",q:"dumbbell sumo squat form"},
       {n:"DB Step-Up",s:"2 × 8 / leg",note:"Step onto sturdy chair/step, drive through the top foot, control coming down. Rest 60s.",q:"dumbbell step up form"},
@@ -937,7 +937,7 @@ const PROGRAM = [
     ]
   },
   {
-    name:"Upper B", accent:"Pull focus",
+    name:"Pull Focus", accent:"Upper Body B",
     ex:[
       {n:"DB Bent-Over Row",s:"3 × 10",note:"Hinge at hips, flat back, pull DBs to ribs, squeeze shoulder blades. Rest 75s.",q:"dumbbell bent over row form"},
       {n:"Band Row (seated)",s:"3 × 12",note:"Anchor band at feet, pull elbows back, chest tall. Rest 60s.",q:"seated band row form"},
@@ -1058,7 +1058,7 @@ function buildNav(){
     const done=state[i].every(Boolean);
     const tab=document.createElement('div');
     tab.className='day-tab'+(i===activeDay?' active':'')+(done?' done':'');
-    const short=["Lower A","Upper A","Lower B","Upper B"][i]||d.name;
+    const short=["Quad/Glute","Push","Glute/Ham","Pull"][i]||d.name;
     tab.innerHTML=`<span class="dt-num">D${i+1}</span><span class="dt-lbl">${short}</span>`;
     tab.onclick=()=>{activeDay=i;render();};
     nav.appendChild(tab);
