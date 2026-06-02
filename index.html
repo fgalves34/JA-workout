@@ -2149,9 +2149,11 @@ function renderDashboard(){
   const weights=loadWeights();
   const s=summarizeWeek(prevISO);
 
-  // weight this week and delta
-  const wThis=weights[prevISO]||null;
-  const wPrev=weights[ppISO]||null;
+  // weight — find most recent two entries for comparison
+  const allWts=Object.entries(weights).sort((a,b)=>a[0].localeCompare(b[0]));
+  const wThis=allWts.length>0?allWts[allWts.length-1][1]:null;
+  const wPrev=allWts.length>1?allWts[allWts.length-2][1]:null;
+  const wThisKey=allWts.length>0?allWts[allWts.length-1][0]:null;
   const TOTAL=totalItemsCount();
 
   // pull raw archived data for extra stats
@@ -2265,12 +2267,19 @@ function renderDashboard(){
     <div class="dash-card-sub">out of 7 days</div>
   </div>`;
 
-  // water card
-  html+=`<div class="dash-card">
-    <div class="dash-card-ico">💧</div>
-    <div class="dash-card-val" style="color:#3aa8c9">${waterDaysHit}/7</div>
-    <div class="dash-card-lbl">Gallon days hit</div>
-    <div class="dash-card-sub">Avg ${waterAvg} oz on active days</div>
+  // water card — full width
+  html+=`<div class="dash-card" style="grid-column:span 2;display:flex;align-items:center;gap:18px">
+    <div>
+      <div class="dash-card-ico">💧</div>
+      <div class="dash-card-val" style="color:#3aa8c9">${waterDaysHit}/7</div>
+      <div class="dash-card-lbl">Gallon days hit</div>
+    </div>
+    <div style="flex:1">
+      <div class="dash-card-sub">Avg ${waterAvg} oz on active days</div>
+      <div style="background:var(--panel);border-radius:99px;height:10px;margin-top:8px;overflow:hidden">
+        <div style="height:100%;border-radius:99px;background:#3aa8c9;width:${waterPct}%"></div>
+      </div>
+    </div>
   </div>`;
 
   html+=`</div>`; // /dash-grid
@@ -2318,9 +2327,13 @@ function renderDashboard(){
   if(wPrev!=null&&wThis!=null&&(wThis-wPrev)<-0.5) highlights.push(`Lost <b>${Math.abs((wThis-wPrev).toFixed(1))} lb</b> this week 🔥`);
   if(pctWorkout===100) highlights.push(`<b>100% workout completion</b> — perfect week! 💪`);
   else if(pctWorkout>=75) highlights.push(`<b>${pctWorkout}% workout completion</b> — strong week`);
+  else if(pctWorkout>=50) highlights.push(`<b>${pctWorkout}% workout completion</b> — solid effort`);
   if(pctMeals>=90) highlights.push(`<b>${pctMeals}% meal compliance</b> — dialed in 🍽️`);
+  else if(pctMeals>=60) highlights.push(`<b>${pctMeals}% meal compliance</b> — staying consistent`);
   if(cardioMin>=150) highlights.push(`<b>${cardioMin} min of cardio</b> this week 🏃`);
+  else if(cardioSess>=2) highlights.push(`<b>${cardioSess} cardio sessions</b> this week 🏃`);
   if(s.workouts>=4) highlights.push(`Hit all <b>${s.workouts} workout days</b> this week`);
+  else if(s.workouts>=2) highlights.push(`<b>${s.workouts} workout days</b> logged this week`);
 
   if(highlights.length>0){
     html+=`<div class="dash-streak">
@@ -2417,10 +2430,19 @@ async function shareStory(){
     ctx.fillStyle=col; ctx.font='800 56px Archivo, sans-serif';
     ctx.fillText(isLoss ? 'down this week' : isGain ? 'up this week' : 'no change', W/2, y);
     y+=80;
+  } else if(d.weight!=null){
+    // have a weight but no prior week to compare
+    ctx.fillStyle=muted; ctx.font='600 36px Archivo, sans-serif';
+    ctx.fillText('CURRENT WEIGHT', W/2, y-90);
+    ctx.fillStyle=accent; ctx.font='900 180px "Bebas Neue", Archivo, sans-serif';
+    ctx.fillText(String(d.weight), W/2, y+50);
+    ctx.fillStyle=muted; ctx.font='600 50px Archivo, sans-serif';
+    ctx.fillText('lb', W/2, y+110);
+    y+=200;
   } else {
-    // no week-over-week change available yet
-    ctx.fillStyle=muted; ctx.font='600 44px Archivo, sans-serif';
-    ctx.fillText('Logging in progress', W/2, y);
+    // no weight at all — shift cards up
+    ctx.fillStyle=muted; ctx.font='600 36px Archivo, sans-serif';
+    ctx.fillText('WEEKLY STATS', W/2, y-60);
     y=380;
   }
 
